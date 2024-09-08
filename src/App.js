@@ -1,25 +1,49 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import React, { useState, useEffect } from "react";
 
-function App() {
+const App = () => {
+  const [time, setTime] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
+
+  useEffect(() => {
+    let timer = null;
+    if (isRunning) {
+      timer = setInterval(() => setTime(prevTime => prevTime + 1), 1000);
+    } 
+    return () => {
+      if (timer) clearInterval(timer);
+    };
+  }, [isRunning]);
+
+  const handleStartStop = () => {
+    setIsRunning(prevState => !prevState);
+  };
+
+  const handleReset = () => {
+    setIsRunning(false);
+    setTime(0);
+  };
+
+  const formatTime = () => {
+    const minutes = String(Math.floor(time / 60)).padStart(1, "0");
+    const seconds = String(time % 60).padStart(2, "0");
+    return `${minutes}:${seconds}`;
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+     <div className="stopwatch">
+      <h2>Stopwatch</h2>
+      <div className="time">Time: {formatTime()}</div>
+      <div className="buttons">
+        <button onClick={handleStartStop}>
+          {isRunning ? "Stop" : "Start"}
+        </button>
+        <button onClick={handleReset}>Reset</button>
+      </div>
+    </div>
     </div>
   );
-}
+};
 
 export default App;
